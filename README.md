@@ -1,4 +1,15 @@
-﻿# Akaunting™
+# CSTC PROJECT : 
+## PROJECT :
+### Configuring a DevSecOps System in GitHub Actions
+## TASKS :
+~~~
+A >> GitHub Secrets pour l'intégration directe avec les workflows GitHub Actions.
+B >> SonarQube pour l'analyse du code dans les étapes précoces.
+C >> Kubernetes Secrets avec des plugins de gestion de sécurité comme Sealed Secrets.
+~~~
+###
+ 
+ # Akaunting™
 
 [![Release](https://img.shields.io/github/v/release/akaunting/akaunting?label=release)](https://github.com/akaunting/akaunting/releases)
 ![Downloads](https://img.shields.io/github/downloads/akaunting/akaunting/total?label=downloads)
