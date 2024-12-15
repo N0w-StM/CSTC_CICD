@@ -7,7 +7,20 @@ A >> GitHub Secrets pour l'intégration directe avec les workflows GitHub Action
 B >> SonarQube pour l'analyse du code dans les étapes précoces.
 C >> Kubernetes Secrets avec des plugins de gestion de sécurité comme Sealed Secrets.
 ~~~
-###
+### FINISHED :
+#### 1 >> SONARQUBE CONFIGURING:
+```
+> Pulling the sonarqube image and configuring it using DockerCompose file : 
+```
+[docker-compose.yml](https://github.com/N0w-StM/CSTC_CICD/blob/main/docker-compose.yml)
+#### 2 >> GitHub Secrets:
+```
+> After configuring SonarQube Server we put the SONAR_TOKEN and SONAR_URL as variables in guthub secrets so we can call them to scan our project
+```
+#### 3 >> Kubernetes Secrets:
+```
+> Almost Done
+```
  
  # Akaunting™
 
