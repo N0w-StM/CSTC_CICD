@@ -1,18 +1,4 @@
 services:
-  jenkins:
-    image: jenkins/jenkins
-    container_name: jenkins
-    hostname: jenkins
-    user: root 
-    environment:
-      DOCKER_TLS_CERTDIR: /certs
-    ports:
-      - "8080:8080"
-      - "50000:50000"
-    volumes:
-      - jenkins-docker-certs:/certs/client
-      - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
   sonarqube:
     image: sonarqube
     hostname: sonarqube
@@ -51,8 +37,6 @@ services:
       - postgresql_data:/var/lib/postgresql/data
 
 volumes:
-  jenkins_home:
-  jenkins-docker-certs:
   sonarqube_data:
   sonarqube_temp:
   sonarqube_extensions:
