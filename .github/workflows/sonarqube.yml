@@ -24,6 +24,7 @@ jobs:
         run: |
           echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig.yaml
           export KUBECONFIG=kubeconfig.yaml
+          kubectl get namespaces
           kubectl get nodes
 
       # Deploy Sealed Secret to Kubernetes
