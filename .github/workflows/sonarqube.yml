@@ -1,21 +1,50 @@
-name: Build
+name: CI AKAUNT
 
 on:
   push:
     branches:
       - main
 
-
 jobs:
-  build:
-    name: Build and analyze
+  build-and-scan:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up kubectl
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - uses: sonarsource/sonarqube-scan-action@v4
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          version: 'v1.24.0'
+
+      # Set up kubeconfig
+      - name: Configure Kubernetes
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig.yaml
+          export KUBECONFIG=kubeconfig.yaml
+          kubectl get nodes
+
+      # Deploy Sealed Secret to Kubernetes
+      - name: Apply Sealed Secret
+        run: |
+          kubectl apply -f my-sealed-secret.yaml
+          echo "Waiting for Sealed Secrets to decrypt..."
+          sleep 10
+          kubectl get secrets
+
+      # Extract the Secret and Use It
+      - name: Extract Kubernetes Secret
+        run: |
+          SONAR_TOKEN=$(kubectl get secret sonar-token -o jsonpath='{.data.SONAR_TOKEN}' | base64 -d)
+          echo "SONAR_TOKEN=$SONAR_TOKEN" >> $GITHUB_ENV
+
+      # Run SonarQube Scan
+      - name: Run SonarQube Scanner
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=$PJT_KEY \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=$SONAR_URL \
+            -Dsonar.login=$SONAR_TOKEN
