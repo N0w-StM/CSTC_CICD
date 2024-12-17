@@ -15,7 +15,7 @@ jobs:
         uses: azure/k8s-set-context@v2
         with:
           method: service-account
-          k8s-url: https://equipped-fowl-purely.ngrok-free.app/
+          k8s-url: https://equipped-fowl-purely.ngrok-free.app
           k8s-secret: ${{ secrets.KUBCONFIG }}
 
       - name: Checkout source code
