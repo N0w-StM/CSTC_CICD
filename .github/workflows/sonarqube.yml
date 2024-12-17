@@ -4,28 +4,16 @@ on:
   push:
     branches:
       - main
-
 jobs:
   deploy:
-    name: Deploy
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: Set the Kubernetes context
-        uses: azure/k8s-set-context@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Kubectl
+        uses: azure/k8s-set-context@v1
         with:
-          method: service-account
-          k8s-url: https://equipped-fowl-purely.ngrok-free.app
-          k8s-secret: ${{ secrets.KUBCONFIG }}
-
-      - name: Checkout source code
-        uses: actions/checkout@v3
-
-      - name: Deploy to the Kubernetes cluster
-        uses: azure/k8s-deploy@v1
-        with:
-          namespace: default
-          manifests: |
-            dep.yml
-          images: |
-            hub.docker.com/r/24cstc/cstc_akounting
+          kubeconfig: ${{ secrets.KUBECONFIG }}
+      - name: Deploy
+        run: |
+          kubectl apply -f dep.yaml
