@@ -23,10 +23,6 @@ jobs:
       - name: Deploy to Kubernetes
         run: |
           echo "[+] Configuring Kub ..."
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
-          chmod 600 $HOME/.kube/config
-          echo "[+] Deploying..."
           kubectl apply -f dep.yaml
           echo "Checking rollout status"
           kubectl rollout status deployment/php-app-deployment
