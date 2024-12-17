@@ -1,19 +1,15 @@
-name: CI AKAUNT
+name: Get pods
+on: [push]
 
-on:
-  push:
-    branches:
-      - main
 jobs:
   deploy:
+    name: Deploy
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up Kubectl
+      - uses: actions/checkout@v4
       - uses: actions-hub/kubectl@master
         env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
           args: get pods
-      
