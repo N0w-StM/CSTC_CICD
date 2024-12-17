@@ -1,4 +1,4 @@
-name: CI AKAUNT
+name: Deploy to Local Kubernetes
 
 on:
   push:
@@ -6,25 +6,46 @@ on:
       - main
 
 jobs:
-  build-and-scan:
-    runs-on: ubuntu-22.04
+  deploy-local-k8s:
+    name: Deploy Docker Image to Local Kubernetes
+    runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout Code
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Set up kubectl
-      - name: Setup kubectl
+      # 2. Set up kubectl
+      - name: Set up kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: 'v1.24.0'
+          version: 'v1.24.0'  # Adjust to match your K8s cluster version
 
-      # Set up kubeconfig
-      - name: Deploy to Kubernetes
+      # 3. Configure KUBECONFIG for local Kubernetes cluster
+      - name: Set up KUBECONFIG
         run: |
-          echo "[+] Configuring Kub ..."
+          echo "[+] Configuring KUBECONFIG..."
+          mkdir -p $HOME/.kube
           echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+          kubectl cluster-info  # Verify connection to the cluster
+
+      # 4. Pull Docker Image from Docker Hub
+      - name: Pull Docker Image
+        run: |
+          echo "[+] Pulling image from Docker Hub..."
+          docker pull docker.io/24cstc/cstc_akounting:latest
+          echo "[+] Verifying image..."
+          docker images
+
+      # 5. Deploy to Kubernetes
+      - name: Deploy to Local Kubernetes
+        run: |
+          echo "[+] Deploying to Kubernetes..."
           kubectl apply -f dep.yaml
-          echo "Checking rollout status"
+          
+          echo "[+] Checking rollout status..."
           kubectl rollout status deployment/php-app-deployment
-          echo "Deployment successful!"
+          
+          echo "[+] Getting pods status..."
+          kubectl get pods -o wide
