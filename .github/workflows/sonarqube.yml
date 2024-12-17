@@ -1,4 +1,4 @@
-name: Get pods
+name: Deploy
 on: [push]
 
 jobs:
@@ -8,8 +8,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+
+      - name: Decode Kubeconfig
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > kubeconfig.yaml
+          export KUBECONFIG=$(pwd)/kubeconfig.yaml
+
+      - name: Get pods
+        uses: actions-hub/kubectl@master
         with:
           args: get pods
