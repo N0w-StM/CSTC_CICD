@@ -20,32 +20,14 @@ jobs:
           version: 'v1.24.0'
 
       # Set up kubeconfig
-      - name: Configure Kubernetes
+      - name: Deploy to Kubernetes
         run: |
-          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig.yaml
-          export KUBECONFIG=kubeconfig.yaml
-          kubectl get namespaces
-          kubectl get nodes
-
-      # Deploy Sealed Secret to Kubernetes
-      - name: Apply Sealed Secret
-        run: |
-          kubectl apply -f my-sealed-secret.yaml
-          echo "Waiting for Sealed Secrets to decrypt..."
-          sleep 10
-          kubectl get secrets
-
-      # Extract the Secret and Use It
-      - name: Extract Kubernetes Secret
-        run: |
-          SONAR_TOKEN=$(kubectl get secret sonar-token -o jsonpath='{.data.SONAR_TOKEN}' | base64 -d)
-          echo "SONAR_TOKEN=$SONAR_TOKEN" >> $GITHUB_ENV
-
-      # Run SonarQube Scan
-      - name: Run SonarQube Scanner
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=$PJT_KEY \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=$SONAR_URL \
-            -Dsonar.login=$SONAR_TOKEN
+          echo "[+] Configuring Kub ..."
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+          echo "[+] Deploying..."
+          kubectl apply -f dep.yaml
+          echo "Checking rollout status"
+          kubectl rollout status deployment/php-app-deployment
+          echo "Deployment successful!"
