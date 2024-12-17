@@ -11,9 +11,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Set up Kubectl
-        uses: azure/k8s-set-context@v1
+      - uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
         with:
-          kubeconfig: ${{ secrets.KUBECONFIG }}
-      - name: Deploy
-        run: |
-          kubectl apply -f dep.yaml
+          args: get pods
+      
