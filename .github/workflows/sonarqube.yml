@@ -6,23 +6,26 @@ on:
       - main
 
 jobs:
-  build-and-scan:
-    runs-on: ubuntu-22.04
-
+  deploy:
+    name: Deploy
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Set the Kubernetes context
+        uses: azure/k8s-set-context@v2
+        with:
+          method: service-account
+          k8s-url: https://equipped-fowl-purely.ngrok-free.app/
+          k8s-secret: ${{ secrets.KUBCONFIG }}
+
+      - name: Checkout source code
         uses: actions/checkout@v3
 
-      # Set up kubectl
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v3
+      - name: Deploy to the Kubernetes cluster
+        uses: azure/k8s-deploy@v1
         with:
-          version: 'v1.24.0'
-
-      # Set up kubeconfig
-      - name: Configure Kubernetes
-        run: |
-          echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
-          export KUBECONFIG=kubeconfig.yaml
-          kubectl get namespaces
-          kubectl get nodes
+          namespace: default
+          manifests: |
+            dep.yml
+          images: |
+            hub.docker.com/r/24cstc/cstc_akounting
