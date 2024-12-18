@@ -11,7 +11,7 @@ jobs:
 
       - name: Set up Kubeconfig
         run: |
-          echo "${{ secrets.KUBECONFIG }}" | base64 --decode > kubeconfig.yaml
+          echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
           export KUBECONFIG=$(pwd)/kubeconfig.yaml
 
       - name: Debug Kubeconfig
