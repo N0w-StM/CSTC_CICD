@@ -16,7 +16,7 @@ spec:
         - name: akaunting-app
           image: 24cstc/akaunting-app
           ports:
-            - containerPort: 80 iguration
+            - containerPort: 80 
 ---
 apiVersion: v1
 kind: Service
