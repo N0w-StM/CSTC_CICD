@@ -1,36 +1,32 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: php-app-deployment
-  labels:
-    app: php-app
+  name: akaunting-app
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: php-app
+      app: akaunting-app
   template:
     metadata:
       labels:
-        app: php-app
+        app: akaunting-app
     spec:
       containers:
-        - name: php-app
-          image: 24cstc/cstc_akounting
+        - name: akaunting-app
+          image: 24cstc/akaunting-app
           ports:
-            - containerPort: 80
-      imagePullSecrets:
-        - name: dk-secret
+            - containerPort: 80 iguration
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: php-app-service
+  name: akaunting-app
 spec:
-  selector:
-    app: php-app
+  type: NodePort
   ports:
-    - protocol: TCP
-      port: 80
+    - port: 80
       targetPort: 80
-  type: NodePort    
+      nodePort: 30000
+  selector:
+    app: akaunting-app
