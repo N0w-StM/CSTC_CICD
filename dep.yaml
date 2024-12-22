@@ -2,31 +2,56 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: akaunting-app
+  labels:
+    app: akaunting
 spec:
-  replicas: 1
+  replicas: 1 
   selector:
     matchLabels:
-      app: akaunting-app
+      app: akaunting
   template:
     metadata:
       labels:
-        app: akaunting-app
+        app: akaunting
     spec:
       containers:
-        - name: akaunting-app
-          image: 24cstc/akaunting-app
+        - name: akaunting
+          image: 24cstc/cstc_akounting:latest
           ports:
-            - containerPort: 80 
+            - containerPort: 80
+          env:
+            - name: DB_NAME
+              value: "db"  
+            - name: DB_USERNAME
+              value: "usr"  
+            - name: DB_PASSWORD
+              value: "dbpas" 
+            - name: ADMIN_EMAIL
+              value: "@gm"  
+            - name: ADMIN_PASSWORD
+              value: "passwd"  
+          volumeMounts:
+            - name: app-storage
+              mountPath: /var/www/html/storage  
+            - name: app-cache
+              mountPath: /var/www/html/bootstrap/cache  
+      volumes:
+        - name: app-storage
+          persistentVolumeClaim:
+            claimName: app-storage-pvc  
+        - name: app-cache
+          persistentVolumeClaim:
+            claimName: app-cache-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: akaunting-app
+  name: akaunting-service
 spec:
-  type: NodePort
-  ports:
-    - port: 80
-      targetPort: 80
-      nodePort: 30000
   selector:
-    app: akaunting-app
+    app: akaunting
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
