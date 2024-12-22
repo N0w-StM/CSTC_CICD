@@ -12,7 +12,7 @@ jobs:
 
       - name: Set up Kubeconfig
         run: |
-          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig.yaml
+          echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
           export KUBECONFIG=$(pwd)/kubeconfig.yaml
 
       - name: Debug Kubeconfig
@@ -23,20 +23,20 @@ jobs:
       - name: Get pods
         uses: actions-hub/kubectl@master
         env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
           args: get pods --kubeconfig=kubeconfig.yaml
 
       - name: Deploy akaunting-app
         uses: actions-hub/kubectl@master
         env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
           args: apply -f dep.yaml --kubeconfig=kubeconfig.yaml
 
       - name: Get deployment status
         uses: actions-hub/kubectl@master
         env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
           args: rollout status deployment/akaunting-app --kubeconfig=kubeconfig.yaml
