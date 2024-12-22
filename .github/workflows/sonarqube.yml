@@ -13,30 +13,30 @@ jobs:
       - name: Set up Kubeconfig
         run: |
           echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
-          export KUBECONFIG=$(pwd)/kubeconfig.yaml
+          echo "KUBECONFIG=$(pwd)/kubeconfig.yaml" >> $GITHUB_ENV
 
       - name: Debug Kubeconfig
         run: |
           echo "Checking Kubeconfig content:"
-          cat kubeconfig.yaml
+          head -n 10 kubeconfig.yaml  # Show only the first 10 lines for debugging
 
       - name: Get pods
         uses: actions-hub/kubectl@master
         env:
-          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+          KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
         with:
-          args: get pods --kubeconfig=kubeconfig.yaml
+          args: get pods
 
       - name: Deploy akaunting-app
         uses: actions-hub/kubectl@master
         env:
-          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+          KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
         with:
-          args: apply -f dep.yaml --kubeconfig=kubeconfig.yaml
+          args: apply -f dep.yaml
 
       - name: Get deployment status
         uses: actions-hub/kubectl@master
         env:
-          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+          KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
         with:
-          args: rollout status deployment/akaunting-app --kubeconfig=kubeconfig.yaml
+          args: rollout status deployment/akaunting-app
