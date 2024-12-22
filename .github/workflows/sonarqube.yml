@@ -7,36 +7,39 @@ jobs:
     runs-on: self-hosted
 
     steps:
-   #   - name: Checkout code
-    #    uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up Kubeconfig
         run: |
           echo "${{ secrets.KUBECONFIG }}" > kubeconfig.yaml
-          echo "KUBECONFIG=$(pwd)/kubeconfig.yaml" >> $GITHUB_ENV
+          echo "KUBECONFIG=$(pwd)/kubeconfig.yaml" >> $GITHUB_ENV  # Set KUBECONFIG for subsequent steps
 
       - name: Debug Kubeconfig
         run: |
           echo "Checking Kubeconfig content:"
-          head -n 10 kubeconfig.yaml  # Show only the first 10 lines for debugging
+          head -n 10 kubeconfig.yaml  # Show first 10 lines for debugging
 
       - name: Get pods
         uses: actions-hub/kubectl@master
         env:
-          KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+          #KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml  # Use the path to the kubeconfig file
         with:
           args: get pods
 
       - name: Deploy akaunting-app
         uses: actions-hub/kubectl@master
         env:
-          KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+          #KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
         with:
-          args: apply -f dep.yaml
+          args: apply -f dep.yaml  # Apply dep.yaml to deploy
 
       - name: Get deployment status
         uses: actions-hub/kubectl@master
         env:
-          KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+          #KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
         with:
           args: rollout status deployment/akaunting-app
