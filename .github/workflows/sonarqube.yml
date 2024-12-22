@@ -35,7 +35,7 @@ jobs:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
           #KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
         with:
-          args: apply -f dep.yaml  # Apply dep.yaml to deploy
+          args: apply -f dep.yml  # Apply dep.yaml to deploy
 
       - name: Get deployment status
         uses: actions-hub/kubectl@master
