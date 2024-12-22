@@ -4,7 +4,7 @@ on: [push]
 jobs:
   deploy:
     name: Deploy to Kubernetes
-    runs-on: ubuntu-22.04
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
